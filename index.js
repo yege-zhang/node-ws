@@ -7,9 +7,9 @@ const { Buffer } = require('buffer');
 const { exec, execSync } = require('child_process');
 const { WebSocket, createWebSocketStream } = require('ws');
 const UUID = process.env.UUID || 'de04add9-5c68-6bab-950c-08cd5320df33'; // 运行哪吒v1,在不同的平台需要改UUID,否则会被覆盖
-const NZ_SERVER = process.env.NZ_SERVER || 'nz.538598.xyz:2345';       // 哪吒v1填写形式：nz.abc.com:8008   哪吒v0填写形式：nz.abc.com
+const NEZHA_SERVER = process.env.NEZHA_SERVER || 'nz.538598.xyz:2345';       // 哪吒v1填写形式：nz.abc.com:8008   哪吒v0填写形式：nz.abc.com
 const NEZHA_PORT = process.env.NEZHA_PORT || '';           // 哪吒v1没有此变量，v0的agent端口为{443,8443,2096,2087,2083,2053}其中之一时开启tls
-const NEZHA_KEY = process.env.NZ_CLIENT_SECRET || 'T7rvaK2OZhLR5tAdRoNnIlJd3i2Jia8X ';             // v1的NZ_CLIENT_SECRET或v0的agent端口                
+const NEZHA_KEY = process.env.NEZHA_KEY || 'T7rvaK2OZhLR5tAdRoNnIlJd3i2Jia8X ';             // v1的NZ_CLIENT_SECRET或v0的agent端口                
 const DOMAIN = process.env.DOMAIN || '1234.abc.com';       // 填写项目域名或已反代的域名，不带前缀，建议填已反代的域名
 const AUTO_ACCESS = process.env.AUTO_ACCESS || true;      // 是否开启自动访问保活,false为关闭,true为开启,需同时填写DOMAIN变量
 const SUB_PATH = process.env.SUB_PATH || 'sub';            // 获取节点的订阅路径
@@ -112,14 +112,14 @@ const runnz = async () => {
   let NEZHA_TLS = '';
   let command = '';
 
-  if (NZ_SERVER && NEZHA_PORT && NEZHA_KEY) {
+  if (NEZHA_SERVER && NEZHA_PORT && NEZHA_KEY) {
     const tlsPorts = ['443', '8443', '2096', '2087', '2083', '2053'];
     NEZHA_TLS = tlsPorts.includes(NEZHA_PORT) ? '--tls' : '';
-    command = `nohup ./npm -s ${NZ_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} >/dev/null 2>&1 &`;
-  } else if (NZ_SERVER && NEZHA_KEY) {
+    command = `nohup ./npm -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} >/dev/null 2>&1 &`;
+  } else if (NEZHA_SERVER && NEZHA_KEY) {
     if (!NEZHA_PORT) {
       // 检测哪吒是否开启TLS
-      const port = NZ_SERVER.includes(':') ? NZ_SERVER.split(':').pop() : '';
+      const port = NEZHA_SERVER.includes(':') ? NEZHA_SERVER.split(':').pop() : '';
       const tlsPorts = new Set(['443', '8443', '2096', '2087', '2083', '2053']);
       const nezhatls = tlsPorts.has(port) ? 'true' : 'false';
       const configYaml = `
@@ -134,7 +134,7 @@ gpu: false
 insecure_tls: false
 ip_report_period: 1800
 report_delay: 1
-server: ${NZ_SERVER}
+server: ${NEZHA_SERVER}
 skip_connection_count: false
 skip_procs_count: false
 temperature: false
