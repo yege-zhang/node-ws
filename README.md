@@ -1,3 +1,4 @@
+复制于frankiejun/node-ws项目，细微调整适用自己的情况
 # 安装  
 
 ```bash 
